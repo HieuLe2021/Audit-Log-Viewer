@@ -1,0 +1,5 @@
+{
+  "name": "Audit Log Viewer",
+  "description": "A tool to inspect audit logs from a Power Apps system. It allows filtering by table, action, date range, and record ID.",
+  "requestFramePermissions": []
+}
