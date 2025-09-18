@@ -245,7 +245,7 @@ const App: React.FC = () => {
   const totalPages = state.totalCount > 0 ? Math.ceil(state.totalCount / filters.pageSize) : 0;
 
   return (
-    <div className="h-screen font-sans bg-secondary text-foreground dark:bg-dark-background dark:text-dark-foreground p-4">
+    <div className="h-screen font-sans bg-background text-foreground dark:bg-dark-background p-4">
       <div className="flex h-full w-full gap-4">
         <FilterPanel
           isOpen={isPanelOpen}
