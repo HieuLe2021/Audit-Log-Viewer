@@ -199,45 +199,37 @@ const App: React.FC = () => {
   
   const handlePageChange = async (direction: 'next' | 'prev') => {
     if (direction === 'prev') {
-      if (state.currentPage > 1) {
-        dispatch({ type: 'SET_PAGE', payload: state.currentPage - 1 });
-      }
+      // The button is disabled in the UI if currentPage is 1.
+      dispatch({ type: 'SET_PAGE', payload: state.currentPage - 1 });
       return;
     }
 
-    if (direction === 'next') {
-      const totalPages = Math.ceil(state.totalCount / filters.pageSize);
-      const nextPageNumber = state.currentPage + 1;
+    // Direction is 'next'
+    const nextPageNumber = state.currentPage + 1;
 
-      if (state.currentPage >= totalPages) {
-        return; // Already on the last page
-      }
+    // If we have already fetched the next page, just navigate to it.
+    if (nextPageNumber <= state.pageHistory.length) {
+      dispatch({ type: 'SET_PAGE', payload: nextPageNumber });
+      return;
+    }
 
-      // If we have already fetched the next page, just navigate to it
-      if (nextPageNumber <= state.pageHistory.length) {
-        dispatch({ type: 'SET_PAGE', payload: nextPageNumber });
-        return;
-      }
+    // Otherwise, fetch the next page from the API.
+    // The button is disabled if there's no nextLink, but we safeguard here too.
+    const currentPageData = state.pageHistory[state.currentPage - 1];
+    if (!currentPageData?.nextLink) {
+      return;
+    }
 
-      // Otherwise, we need to fetch the next page from the API
-      const currentPageData = state.pageHistory[state.currentPage - 1];
-      if (!currentPageData?.nextLink) {
-        // This case might happen if the API stops providing a nextLink before the total count is reached.
-        // We can't proceed, so we stop here.
-        return;
+    dispatch({ type: 'PAGE_CHANGE_START' });
+    try {
+      const results = await fetchAuditLogs(filters, currentPageData.nextLink);
+      dispatch({ type: 'NEXT_PAGE_SUCCESS', payload: results });
+    } catch (err: unknown) {
+      let message = 'Failed to fetch next page. Please try again.';
+      if (err instanceof Error) {
+        message = err.message;
       }
-
-      dispatch({ type: 'PAGE_CHANGE_START' });
-      try {
-        const results = await fetchAuditLogs(filters, currentPageData.nextLink);
-        dispatch({ type: 'NEXT_PAGE_SUCCESS', payload: results });
-      } catch (err: unknown) {
-        let message = 'Failed to fetch next page. Please try again.';
-        if (err instanceof Error) {
-          message = err.message;
-        }
-        dispatch({ type: 'PAGE_CHANGE_FAILURE', payload: message });
-      }
+      dispatch({ type: 'PAGE_CHANGE_FAILURE', payload: message });
     }
   };
   

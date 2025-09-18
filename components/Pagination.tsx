@@ -17,14 +17,6 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalCount, pageSi
         return null; // Don't show pagination if there are no results
     }
 
-    const handlePrevious = () => {
-        onPageChange('prev');
-    };
-
-    const handleNext = () => {
-        onPageChange('next');
-    };
-    
     const isPrevDisabled = currentPage === 1 || isLoading;
     const isNextDisabled = currentPage >= totalPages || isLoading;
 
@@ -42,7 +34,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalCount, pageSi
                     <span className="text-sm text-border dark:text-dark-border">|</span>
                     <nav className="relative z-0 inline-flex items-center rounded-md shadow-sm -space-x-px" aria-label="Pagination">
                         <button
-                            onClick={handlePrevious}
+                            onClick={() => onPageChange('prev')}
                             disabled={isPrevDisabled}
                             className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-border bg-secondary text-sm font-medium text-muted-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed dark:border-dark-border dark:bg-dark-secondary dark:hover:bg-dark-muted"
                         >
@@ -53,7 +45,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalCount, pageSi
                                 Page {currentPage.toLocaleString()} of {totalPages.toLocaleString()}
                         </span>
                         <button
-                            onClick={handleNext}
+                            onClick={() => onPageChange('next')}
                             disabled={isNextDisabled}
                             className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-border bg-secondary text-sm font-medium text-muted-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed dark:border-dark-border dark:bg-dark-secondary dark:hover:bg-dark-muted"
                         >
